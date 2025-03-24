@@ -1,0 +1,110 @@
+/* Стили для элементов парсинга вакансий */
+
+/* Кнопка парсинга */
+.parse-button {
+    padding: 8px 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .parse-button:hover {
+    background-color: #218838;
+  }
+  
+  /* Спиннер загрузки */
+  .loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Темная тема для новых элементов */
+  .dark .parse-button {
+    background-color: #218838;
+  }
+  
+  .dark .parse-button:hover {
+    background-color: #1e7e34;
+  }
+  
+  .dark .loading-spinner {
+    border-color: rgba(255, 255, 255, 0.1);
+    border-top-color: #5cbbff;
+  }
+  
+  .dark .view-cached-button {
+    background-color: #5a6268;
+  }
+  
+  .dark .view-cached-button:hover {
+    background-color: #4d5459;
+  }
+  
+  .dark .dropdown-toggle {
+    background-color: #138496;
+  }
+  
+  .dark .dropdown-toggle:hover {
+    background-color: #10707f;
+  }
+  
+  /* Стили для iframe встроенного HTML */
+  iframe.html-preview {
+    width: 100%;
+    height: 500px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+  }
+  
+  .dark iframe.html-preview {
+    border-color: #444;
+  }
+  
+  /* Стили для вкладок */
+  .tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .dark .tabs {
+    border-bottom-color: #444;
+  }
+  
+  .tabs button {
+    padding: 8px 15px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    color: #6c757d;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  
+  .tabs button.active {
+    color: #007bff;
+    border-bottom-color: #007bff;
+  }
+  
+  .dark .tabs button {
+    color: #adb5bd;
+  }
+  
+  .dark .tabs button.active {
+    color: #5cbbff;
+    border-bottom-color: #5cbbff;
+  }
