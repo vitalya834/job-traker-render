@@ -122,8 +122,6 @@
       <p v-else>{{ t('noJobsFound') }}</p>
      
       <a href="#" @click="openAddJobModal" class="add-job-link">{{ t('addJob') }}</a>
-    
-      <router-link to="/jobs/add" class="add-job-btn">{{ t('addJob') }}</router-link>
     </div>
     
     <div v-else class="jobs-list">
@@ -135,20 +133,32 @@
         @update-status="refreshJob"
       />
     </div>
+    
+    <!-- Модальное окно добавления вакансии -->
+    <div v-if="showAddJobModal" class="modal-overlay" @click.self="closeAddJobModal">
+      <div class="modal-content" :class="{ dark: darkMode }">
+        <button @click="closeAddJobModal" class="close-button">&times;</button>
+        <AddJob @job-added="handleJobAdded" @cancel="closeAddJobModal" :showCancelButton="true" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useJobStore } from '@/stores/jobStore';
 import JobCard from '@/pages/JobCard.vue';
+import AddJob from '@/pages/AddJob.vue'; // Импортируем компонент AddJob
 import { JOB_STATUS, normalizeStatus, getStatusKey } from "@/constants/jobStatus";
+import { useThemeStore } from '@/stores/themeStore.js'; // Импортируем хранилище темы
 
 const router = useRouter();
 const { t } = useI18n();
 const jobStore = useJobStore();
+const themeStore = useThemeStore();
+const darkMode = computed(() => themeStore.darkMode);
 
 const isLoading = ref(true);
 const jobs = ref([]);
@@ -156,6 +166,7 @@ const sortOrder = ref('newest'); // По умолчанию сортируем �
 const statusFilter = ref('all'); // Фильтр по статусу
 const sourceFilter = ref('all'); // Фильтр по источнику
 const searchQuery = ref(''); // Поисковый запрос
+const showAddJobModal = ref(false); // Состояние для модального окна добавления вакансии
 
 // Проверка активных фильтров
 const hasActiveFilters = computed(() => {
@@ -192,11 +203,11 @@ const filteredAndSortedJobs = computed(() => {
   let filtered = jobs.value.filter(job => {
     // Фильтр по статусу
     if (statusFilter.value !== 'all') {
-  // Используем getStatusKey для нормализации статуса при сравнении
-  if (getStatusKey(job.status) !== statusFilter.value) {
-    return false;
-  }
-}
+      // Используем getStatusKey для нормализации статуса при сравнении
+      if (getStatusKey(job.status) !== statusFilter.value) {
+        return false;
+      }
+    }
     
     // Фильтр по источнику
     if (sourceFilter.value !== 'all') {
@@ -257,16 +268,54 @@ const resetAllFilters = () => {
   sortOrder.value = 'newest';
 };
 
+// Открытие модального окна добавления вакансии
+const openAddJobModal = (event) => {
+  // Предотвращаем переход по маршруту при клике на ссылку
+  event?.preventDefault();
+  showAddJobModal.value = true;
+  // Добавляем класс для блокировки скролла
+  document.body.classList.add('modal-open');
+};
+
+// Закрытие модального окна добавления вакансии
+const closeAddJobModal = () => {
+  showAddJobModal.value = false;
+  // Удаляем класс для разблокировки скролла
+  document.body.classList.remove('modal-open');
+};
+
+// Обработка добавления вакансии
+const handleJobAdded = async () => {
+  console.log("✅ Вакансия добавлена! Обновляем список...");
+  await jobStore.fetchJobs();
+  closeAddJobModal();
+};
+
+// Обработка нажатия клавиши Escape для закрытия модального окна
+const handleKeyDown = (event) => {
+  if (event.key === 'Escape' && showAddJobModal.value) {
+    closeAddJobModal();
+  }
+};
+
 // Получаем список вакансий при монтировании компонента
 onMounted(async () => {
   try {
     isLoading.value = true;
     jobs.value = await jobStore.fetchJobs();
+    // Добавляем обработчик клавиш для модального окна
+    window.addEventListener('keydown', handleKeyDown);
   } catch (error) {
     console.error('Ошибка при загрузке вакансий:', error);
   } finally {
     isLoading.value = false;
   }
+});
+
+// Удаляем обработчик события клавиш при размонтировании
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown);
+  document.body.classList.remove('modal-open');
 });
 
 // Отслеживаем изменения в фильтрах для дебага
@@ -306,11 +355,6 @@ const refreshJob = async ({ id, status, interviewDate, refresh }) => {
   } catch (error) {
     console.error('Ошибка при обновлении вакансии:', error);
   }
-};
-
-// Переход на страницу добавления вакансии
-const goToAddJob = () => {
-  router.push('/jobs/add');
 };
 </script>
 
@@ -776,5 +820,74 @@ select:focus,
   .reset-filters {
     align-self: flex-end;
   }
+}
+
+/* Стили для модального окна */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  position: relative;
+  background-color: #fff;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: slideDown 0.3s ease;
+  padding: 0;
+}
+
+.modal-content.dark {
+  background-color: #2a2a2a;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 26px;
+  cursor: pointer;
+  color: #555;
+  z-index: 10;
+  transition: color 0.2s;
+}
+
+.close-button:hover {
+  color: #000;
+}
+
+.dark .close-button {
+  color: #aaa;
+}
+
+.dark .close-button:hover {
+  color: #fff;
+}
+
+/* Стили для блокировки скролла при открытом модальном окне */
+:global(body.modal-open) {
+  overflow: hidden;
+}
+
+/* Дополнительные анимации для модального окна */
+@keyframes slideDown {
+  from { transform: translateY(-50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 </style>
