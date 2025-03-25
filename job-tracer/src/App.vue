@@ -76,7 +76,27 @@ const handleKeyDown = (event) => {
   <header :class="{ dark: darkMode }">
     <div class="wrapper">
       <div class="logo">
-        <span class="logo-icon">📋</span>
+        <!-- Заменяем эмодзи на наш SVG логотип -->
+        <div class="logo-icon">
+          <svg width="32" height="32" viewBox="0 0 140 140">
+            <defs>
+              <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3B82F6" />
+                <stop offset="100%" stop-color="#1D4ED8" />
+              </linearGradient>
+            </defs>
+            
+            <!-- Главный круг -->
+            <circle cx="70" cy="70" r="70" fill="url(#bgGradient)"/>
+            
+            <!-- Иконка работы/поиска -->
+            <path d="M45 55 L45 95 L95 95 L95 55 L80 55 L80 45 L60 45 L60 55 Z" fill="white" />
+            <path d="M60 45 L60 55 L80 55 L80 45 Z" fill="#E2E8F0" />
+            
+            <!-- Галочка на портфеле -->
+            <path d="M55 75 L65 85 L85 65" stroke="#34D399" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          </svg>
+        </div>
         <span class="logo-text">{{ t('title') }}</span>
       </div>
       
@@ -158,7 +178,16 @@ header.dark {
 }
 
 .logo-icon {
-  font-size: 24px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.logo-icon:hover {
+  transform: scale(1.1);
 }
 
 .logo-text {

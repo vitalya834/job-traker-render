@@ -41,11 +41,13 @@
 
     <!-- Карточка вакансии -->
     <div class="card-header" @click="toggleExpand">
-      <!-- Заменяем квадрат компании на иконку источника вакансии -->
+      <!-- Используем SVG иконку источника вакансии -->
       <div class="source-avatar">
-        <!-- Если есть источник вакансии и для него есть иконка -->
+        <!-- Если есть источник вакансии, показываем SVG иконку -->
         <div class="source-logo" v-if="jobSource">
-          <img :src="getSourceIcon()" :alt="jobSource" :title="jobSource" />
+          <svg width="30" height="30">
+            <use :href="getSourceIcon()"></use>
+          </svg>
         </div>
         <!-- Если нет иконки, показываем первую букву источника или компании -->
         <div class="source-placeholder" v-else>
@@ -85,7 +87,9 @@
           <!-- Информация об источнике вакансии -->
           <span v-if="jobSource" class="source-info">
             <span class="source-icon-small">
-              <img :src="getSourceIcon()" :alt="jobSource" />
+              <svg width="14" height="14">
+                <use :href="getSourceIcon()"></use>
+              </svg>
             </span>
             {{ jobSource }}
           </span>
@@ -247,38 +251,29 @@ const getSourceInitial = () => {
   }
 };
 
+// Функция для получения ID иконки
+const getIconId = (source) => {
+  switch (source) {
+    case 'LinkedIn': return 'icon-linkedin';
+    case 'Indeed': return 'icon-indeed';
+    case 'Glassdoor': return 'icon-glassdoor';
+    case 'Monster': return 'icon-monster';
+    case 'HeadHunter': return 'icon-hh';
+    case 'SuperJob': return 'icon-superjob';
+    case 'Rabota.ru': return 'icon-rabota';
+    case 'GitHub Jobs': return 'icon-github';
+    case 'Stack Overflow Jobs': return 'icon-stackoverflow';
+    case 'Upwork': return 'icon-upwork';
+    case 'Freelancer': return 'icon-freelancer';
+    case 'Stepstone': return 'icon-stepstone';
+    default: return 'icon-web';
+  }
+};
+
 // Функция для получения иконки источника
 const getSourceIcon = () => {
-  const iconBase = '/src/assets/icons/sources'; // Путь к папке с иконками
-  
-  switch (jobSource.value) {
-    case 'LinkedIn':
-      return `${iconBase}/linkedin.svg`;
-    case 'Indeed':
-      return `${iconBase}/indeed.svg`;
-    case 'Glassdoor':
-      return `${iconBase}/glassdoor.svg`;
-    case 'Monster':
-      return `${iconBase}/monster.svg`;
-    case 'HeadHunter':
-      return `${iconBase}/hh.svg`;
-    case 'SuperJob':
-      return `${iconBase}/superjob.svg`;
-    case 'Rabota.ru':
-      return `${iconBase}/rabota.svg`;
-    case 'GitHub Jobs':
-      return `${iconBase}/github.svg`;
-    case 'Stack Overflow Jobs':
-      return `${iconBase}/stackoverflow.svg`;
-    case 'Upwork':
-      return `${iconBase}/upwork.svg`;
-    case 'Freelancer':
-      return `${iconBase}/freelancer.svg`;
-    case 'Stepstone':
-      return `${iconBase}/stepstone.svg`;
-    default:
-      return `${iconBase}/web.svg`; // Дефолтная иконка для других источников
-  }
+  const iconId = getIconId(jobSource.value);
+  return `/icons/job-icons-sprite.svg#${iconId}`;
 };
 
 // Функция для получения цвета фона плейсхолдера в зависимости от источника
@@ -617,10 +612,9 @@ const getStatusTranslation = (status) => {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-.source-logo img {
+.source-logo svg {
   width: 30px;
   height: 30px;
-  object-fit: contain;
 }
 
 .job-info {
@@ -735,10 +729,9 @@ const getStatusTranslation = (status) => {
   margin-right: 5px;
 }
 
-.source-icon-small img {
+.source-icon-small svg {
   width: 14px;
   height: 14px;
-  object-fit: contain;
 }
 
 .expand-icon {

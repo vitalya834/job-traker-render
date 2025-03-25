@@ -17,7 +17,31 @@
     <!-- Показываем список вакансий, если ничего не выбрано -->
     <div v-else>
       <div class="header-section">
-        <h1>{{ t('title') }}</h1>
+        <!-- Добавляем наш новый логотип -->
+        <div class="logo-container">
+          <svg width="280" height="140" viewBox="0 0 320 180">
+            <defs>
+              <linearGradient id="bgGradient5" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3B82F6" />
+                <stop offset="100%" stop-color="#1D4ED8" />
+              </linearGradient>
+            </defs>
+            
+            <!-- Главный круг -->
+            <circle cx="90" cy="90" r="70" fill="url(#bgGradient5)"/>
+            
+            <!-- Иконка работы/поиска -->
+            <path d="M65 75 L65 115 L115 115 L115 75 L100 75 L100 65 L80 65 L80 75 Z" fill="white" />
+            <path d="M80 65 L80 75 L100 75 L100 65 Z" fill="#E2E8F0" />
+            
+            <!-- Галочка на портфеле -->
+            <path d="M75 95 L85 105 L105 85" stroke="#34D399" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+            
+            <!-- Название - Job Tracker -->
+            <text x="175" y="80" font-family="Arial, sans-serif" font-weight="bold" font-size="32" fill="#1E40AF">JOB</text>
+            <text x="175" y="115" font-family="Arial, sans-serif" font-weight="bold" font-size="32" fill="#3B82F6">TRACKER</text>
+          </svg>
+        </div>
       </div>
       
       <!-- Используем обновленный компонент списка вакансий -->
@@ -145,6 +169,24 @@ watch(
 
 .header-section {
   margin-bottom: 30px;
+  text-align: center;
+}
+
+.logo-container {
+  margin: 0 auto 20px;
+  max-width: 300px;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .header-section h1 {
@@ -194,5 +236,13 @@ watch(
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Адаптив для логотипа */
+@media (max-width: 600px) {
+  .logo-container svg {
+    width: 240px;
+    height: 120px;
+  }
 }
 </style>
