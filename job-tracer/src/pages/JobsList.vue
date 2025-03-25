@@ -120,9 +120,10 @@
     <div v-else-if="filteredAndSortedJobs.length === 0" class="no-jobs">
       <p v-if="hasActiveFilters">{{ t('noJobsWithFilters') }}</p>
       <p v-else>{{ t('noJobsFound') }}</p>
-      <button @click="goToAddJob" class="add-job-btn">
-        {{ t('addYourFirstJob') }}
-      </button>
+     
+      <a href="#" @click="openAddJobModal" class="add-job-link">{{ t('addJob') }}</a>
+    
+      <router-link to="/jobs/add" class="add-job-btn">{{ t('addJob') }}</router-link>
     </div>
     
     <div v-else class="jobs-list">

@@ -2,7 +2,10 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import axios from "axios";
 import { normalizeStatus } from "@/constants/jobStatus";
-const API_URL = "http://localhost:5000/api";
+const API_URL = import.meta.env.PROD
+  ? "https://job-traker-render-3.onrender.com/api"
+  : "http://localhost:5000/api";
+
 
 export const useJobStore = defineStore("job", () => {
   const jobs = ref([]);
